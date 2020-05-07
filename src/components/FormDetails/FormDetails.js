@@ -1,7 +1,8 @@
 import React,{Component} from 'react';
 import classes from './FormDetails.css';
 import Input from '../../container/UI/Input/Input';
-import Backdrop from '../../container/UI/Backdrop/Backdrop';
+import axios from '../../Axios';
+import Spinner from '../../container/UI/Spinner/Spinner';
 class FormDetails extends Component {
     state = {
         formDet : {
@@ -16,7 +17,7 @@ class FormDetails extends Component {
             street: {
                 elementType: 'input',
                 elementConfig: {
-                    type: Text,
+                    type: 'text',
                     placeholder: 'Your street of defence actions'
                 },
                 value:'',
@@ -60,7 +61,8 @@ class FormDetails extends Component {
                 value: 'Mitsy'
             }
             
-        }
+        },
+        loading: false
                 
     }
 
@@ -75,6 +77,28 @@ class FormDetails extends Component {
         updatedForm[inputIdentifier]=updatedFormElement;
         this.setState({formDet: updatedForm}) ;
 
+    }
+
+    submitButtonHandler = () => {
+        this.setState({loading: true});
+        const details = {
+            name: this.state.formDet.name,
+            street: this.state.formDet.street,
+            zipcode: this.state.formDet.zipCode,
+            country: this.state.formDet.Country,
+            phone: this.state.formDet.phone,
+            team: this.state.formDet.team
+        }
+        if (this.state.loading)
+        {
+            return <Spinner/>
+        }
+        axios.post('/details.json',details)
+        .then(res => {
+            this.setState({loading: false});
+            console.log(res);
+        })
+        .catch(err => console.log(err));
     }
     render(){
         const formElementsArray = [];
@@ -98,13 +122,12 @@ class FormDetails extends Component {
             </form>
         )
         return(
-            <div>
             <header className={classes.FormDetails}>
-            <Backdrop/>
-            <h1 style={{fontFamily: 'gigi', color: 'pink'}}>Welcome to Kasukabe Defence Group !!</h1>
+            <h1 style={{fontFamily: 'Tahoma', color: 'black'}}>WELCOME TO KASUKABE DEFENCE GROUP</h1>
                 {form}
+            <button style={{textAlign: 'center', color: 'white', background: 'red' }} onClick = {this.submitButtonHandler}>SUBMIT</button>
             </header>
-            </div>
+
             
         )
     }
