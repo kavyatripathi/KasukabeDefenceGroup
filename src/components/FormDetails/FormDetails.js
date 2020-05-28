@@ -3,6 +3,8 @@ import classes from './FormDetails.css';
 import Input from '../../container/UI/Input/Input';
 import axios from '../../Axios';
 import Spinner from '../../container/UI/Spinner/Spinner';
+import FormSummary from '../../components/FormSummary/FormSummary';
+import Auxiliary from '../../hoc/Auxiliary';
 class FormDetails extends Component {
     state = {
         formDet : {
@@ -13,6 +15,11 @@ class FormDetails extends Component {
                     placeholder: 'Enter Your Name'
                 },
                 value: '',
+                validation: {
+                    required: true
+                },
+                valid: false,
+                touched: false
             },
             street: {
                 elementType: 'input',
@@ -21,6 +28,12 @@ class FormDetails extends Component {
                     placeholder: 'Your street of defence actions'
                 },
                 value:'',
+                validation: {
+                    required: true
+                },
+                valid: false,
+                touched: false
+
             },
             zipCode: {
                 elementType: 'input',
@@ -28,7 +41,14 @@ class FormDetails extends Component {
                     type: 'text',
                     placeholder: 'enter your Zip Code'
                 },
-                value: ''
+                value: '',
+                validation: {
+                    required: true,
+                    minlength: 6,
+                    maxlength: 6
+                },
+                valid: false,
+                touched: false
             },
             Country: {
                 elementType: 'input',
@@ -36,7 +56,12 @@ class FormDetails extends Component {
                     type: 'text',
                     placeholder: 'enter your Country of residence'
                 },
-                value: ''
+                value: '',
+                validation: {
+                    required: true
+                },
+                valid: false,
+                touched: false
             },
             phone: {
                 elementType: 'input',
@@ -44,7 +69,14 @@ class FormDetails extends Component {
                     type: 'text',
                     placeholder: 'enter ur contact number'
                 },
-                value: ''
+                value: '',
+                validation: {
+                    required: true,
+                    minlength: 10,
+                    maxlength: 10
+                },
+                valid: false,
+                touched: false
             },
             team: {
                 elementType: 'select',
@@ -58,12 +90,31 @@ class FormDetails extends Component {
                     ],
                     
                 },
-                value: 'Mitsy'
+                value: 'Mitsy',
+                valid: true,
             }
             
         },
-        loading: false
+        loading: false,
+        validForm: false
                 
+    }
+    checkValidity(value, rules) {
+        let isValid = true;
+        
+        if (rules.required) {
+            isValid = value.trim() !== '' && isValid;
+        }
+
+        if (rules.minLength) {
+            isValid = value.length >= rules.minLength && isValid
+        }
+
+        if (rules.maxLength) {
+            isValid = value.length <= rules.maxLength && isValid
+        }
+
+        return isValid;
     }
 
     inputChangeHandler = (event,inputIdentifier) => {
@@ -74,8 +125,15 @@ class FormDetails extends Component {
             ...updatedForm[inputIdentifier]
         };
         updatedFormElement.value = event.target.value;
-        updatedForm[inputIdentifier]=updatedFormElement;
-        this.setState({formDet: updatedForm}) ;
+        updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation);
+        updatedFormElement.touched = true;
+        updatedForm[inputIdentifier] = updatedFormElement;
+        
+        let formIsValid = true;
+        for (let inputIdentifier in updatedForm) {
+            formIsValid = updatedForm[inputIdentifier].valid && formIsValid;
+        }
+        this.setState({formDet: updatedForm, validForm: formIsValid}) ;
 
     }
 
@@ -111,24 +169,41 @@ class FormDetails extends Component {
         let form = (
             <form>
                 {formElementsArray.map(formData => (
+                    <Auxiliary>
                     <Input
                         key={formData.id}
                         elementType={formData.config.elementType}
                         elementConfig={formData.config.elementConfig}
                         value={formData.config.value}
+                        invalid={!formData.config.valid}
+                        shouldValidate={formData.config.validation}
+                        touched={formData.config.touched}
                         changed= {(event) => this.inputChangeHandler(event,formData.id)}
                     />
+                    </Auxiliary>
                 ))}
             </form>
         )
+
+        let detail = []
+        for (let i in this.state.formDet){
+            detail.push({
+                key:i,
+                dets:this.state.formDet[i].value
+            })
+        }
+        const formSummary = <FormSummary details={detail.dets} key={detail.key} />
+
+        
         return(
-            <header className={classes.FormDetails}>
+            <div className={classes.FormDetails}>
             <h1 style={{fontFamily: 'Tahoma', color: 'black'}}>WELCOME TO KASUKABE DEFENCE GROUP</h1>
                 {form}
-            <button style={{textAlign: 'center', color: 'white', background: 'red' }} onClick = {this.submitButtonHandler}>SUBMIT</button>
-            </header>
-
-            
+                <button onClick={this.submitButtonHandler}
+                    style ={{borderRadius: '3px', padding: '10px', color: 'white', backgroundColor: 'green', boxShadow: '6px'}}
+                >SUBMIT</button>
+                
+            </div>      
         )
     }
 }
