@@ -93,6 +93,9 @@ class FormDetails extends Component {
                     
                 },
                 value: 'Mitsy',
+                validation: {
+                    required: true
+                },
                 valid: true,
             }
             
