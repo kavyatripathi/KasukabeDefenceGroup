@@ -1,5 +1,5 @@
 # KasukabeDefenceGroup
 
-A project for practicing basic form and form validations using react.js
+A project for practicing basic form and form validations using react.js.
 
-![Screenshot (58)](https://user-images.githubusercontent.com/48882133/81041016-96ba8700-8e61-11ea-8de1-2eb5659ef1dd.png)
+A registration form which you can fill if you are interested in joining the kasukabe group and helping others under the guidance of shinchan, mitsy, bo-chan, kazama and others. :)
