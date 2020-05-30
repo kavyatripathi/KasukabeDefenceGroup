@@ -45,7 +45,8 @@ class FormDetails extends Component {
                 validation: {
                     required: true,
                     minlength: 6,
-                    maxlength: 6
+                    maxlength: 6,
+                    isNumeric: true
                 },
                 valid: false,
                 touched: false
@@ -73,7 +74,8 @@ class FormDetails extends Component {
                 validation: {
                     required: true,
                     minlength: 10,
-                    maxlength: 10
+                    maxlength: 10,
+                    isNumeric: true
                 },
                 valid: false,
                 touched: false
@@ -112,6 +114,11 @@ class FormDetails extends Component {
 
         if (rules.maxLength) {
             isValid = value.length <= rules.maxLength && isValid
+        }
+
+        if (rules.isNumeric) {
+            const pattern = /^\d+$/;
+            isValid = pattern.test(value) && isValid
         }
 
         return isValid;
